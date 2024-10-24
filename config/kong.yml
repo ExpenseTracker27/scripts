@@ -73,11 +73,11 @@ plugins:
       max_age: 3600
 
   # Rate limiting plugin (optional but recommended)
-  - name: rate-limiting
-    config:
-      minute: 100
-      hour: 1000
-      policy: local
+  # - name: rate-limiting
+  #   config:
+  #     minute: 100
+  #     hour: 1000
+  #     policy: local
 
   # Response transformer for security headers
   # - name: response-transformer

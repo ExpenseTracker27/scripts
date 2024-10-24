@@ -63,6 +63,8 @@ services:
   insightservice:
     image: insightservice
     container_name: insightService27
+    env_file:
+      - /home/tanishq/PycharmProjects/InsightService/.env
     ports:
       - "5000:5000"
     depends_on:
