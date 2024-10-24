@@ -2,13 +2,13 @@ name: kong
 
 services:
   kong:
-    image: kong/kong-gateway
-    container_name: kongExpenseTracker
+    image: kong
+    container_name: kong27
     ports:
-      - "8000:8000"
-      - "8443:8443"
-      - "8001:8001"
-      - "8444:8444"
+      - "8000:8000"   # Proxy
+      - "8443:8443"   # Proxy TLS
+      - "8001:8001"   # Admin API
+      - "8444:8444"   # Admin API TLS
     environment:
       - KONG_DATABASE=off
       - KONG_PROXY_ACCESS_LOG=/dev/stdout
@@ -18,7 +18,8 @@ services:
       - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yml
       - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
       - KONG_LOG_LEVEL=debug
-      - KONG_PLUGINS=bundled
+      - KONG_PLUGINS=auth
+      - KONG_LUA_PACKAGE_PATH=/usr/local/share/lua/5.1/?.lua
     volumes:
       - ./config:/usr/local/kong/declarative
-      - ./plugins:/usr/local/share/lua/5.1/kong/plugins
+      - ./plugins:/usr/local/share/lua/5.1/kong/plugins/

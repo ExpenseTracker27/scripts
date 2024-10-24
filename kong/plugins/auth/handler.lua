@@ -1,13 +1,14 @@
 local kong = kong
 local http = require "resty.http"
 
-local CustomAuthHandler = {
+local AuthHandler = {
   PRIORITY = 1000,
   VERSION = "1.0",
 }
 
+
 -- Access function to handle requests
-function CustomAuthHandler:access(config)
+function AuthHandler:access(config)
   -- Use the auth_service_url from the configuration
   local auth_service_url = config.auth_service_url
   
@@ -34,4 +35,4 @@ function CustomAuthHandler:access(config)
   kong.service.request.set_header("X-User-ID", user_id)
 end
 
-return CustomAuthHandler
+return AuthHandler

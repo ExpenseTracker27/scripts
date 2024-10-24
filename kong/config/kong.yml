@@ -1,8 +1,7 @@
-_format_version: "3.0"
+_format_version: "2.1"
 _transform: true
 
 services:
-  # Auth Service
   - name: auth-service
     url: http://authservice:3001
     routes:
@@ -10,8 +9,8 @@ services:
         paths:
           - /auth/v1
         strip_path: false
+        preserve_host: false
 
-  # Expense Service
   - name: expense-service
     url: http://expenseservice:3000
     routes:
@@ -19,12 +18,12 @@ services:
         paths:
           - /expense/v1
         strip_path: false
+        preserve_host: false
     plugins:
       - name: auth
         config:
           auth_service_url: http://authservice:3001/auth/v1/ping
 
-  # User Service
   - name: user-service
     url: http://userservice:8080
     routes:
@@ -32,12 +31,12 @@ services:
         paths:
           - /user/v1
         strip_path: false
+        preserve_host: false
     plugins:
       - name: auth
         config:
           auth_service_url: http://authservice:3001/auth/v1/ping
 
-  # Insight Service
   - name: insight-service
     url: http://insightservice:5000
     routes:
@@ -45,45 +44,8 @@ services:
         paths:
           - /insight/v1
         strip_path: false
+        preserve_host: false
     plugins:
       - name: auth
         config:
           auth_service_url: http://authservice:3001/auth/v1/ping
-
-plugins:
-  # Global plugins
-  - name: cors
-    config:
-      origins:
-        - "*"
-      methods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - OPTIONS
-        - PATCH
-      headers:
-        - Authorization
-        - Content-Type
-        - X-User-ID
-      exposed_headers:
-        - X-User-ID
-      credentials: true
-      max_age: 3600
-
-  # Rate limiting plugin (optional but recommended)
-  # - name: rate-limiting
-  #   config:
-  #     minute: 100
-  #     hour: 1000
-  #     policy: local
-
-  # Response transformer for security headers
-  # - name: response-transformer
-  #   config:
-  #     add: 
-  #       headers:
-  #         - "X-Frame-Options:DENY"
-  #         - "X-XSS-Protection:1; mode=block"
-  #         - "X-Content-Type-Options:nosniff"
