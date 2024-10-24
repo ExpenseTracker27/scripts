@@ -1,3 +1,5 @@
+name: kong
+
 services:
   kong:
     image: kong/kong-gateway
@@ -19,4 +21,4 @@ services:
       - KONG_PLUGINS=bundled
     volumes:
       - ./config:/usr/local/kong/declarative
-    
+      - ./plugins:/usr/local/share/lua/5.1/kong/plugins
