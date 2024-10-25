@@ -1,6 +1,29 @@
 name: ExpenseTracker
 
 services:
+  kong:
+    image: kong
+    container_name: kong27
+    ports:
+      - "8000:8000"   # Proxy
+      - "8443:8443"   # Proxy TLS
+      - "8001:8001"   # Admin API
+      - "8444:8444"   # Admin API TLS
+    environment:
+      - KONG_DATABASE=off
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yml
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+      - KONG_LOG_LEVEL=debug
+      - KONG_PLUGINS=auth
+      - KONG_LUA_PACKAGE_PATH=/usr/local/share/lua/5.1/?.lua
+    volumes:
+      - ./kong/config:/usr/local/kong/declarative
+      - ./kong/plugins:/usr/local/share/lua/5.1/kong/plugins/
+
   postgres:
     image: postgres
     container_name: postgres27
@@ -10,10 +33,21 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis
+    container_name: redis27
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
